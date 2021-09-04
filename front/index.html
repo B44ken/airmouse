@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iMouse</title>
+</head>
+<body>
+    <button onclick='startAccel()'>start</button>
+    <h1><a href="github.com/b44ken/airmouse">airmouse</a></h1>
+    <input type="text" class='textbox'><button onclick='sendMessage()'>send</button> 
+    
+    <div class="console" style='background: black; color:white; width: 400px; min-height: 200px;'></div>
+
+    <script>
+// const domain = prompt('input server address...')
+
+const user_code = 'TEST'
+
+const handleAccel = event => {
+    accel = event.acceleration
+    var packet = `?x=${accel.x}&y=${accel.y}&z=${accel.z}`
+    fetch('/write/' + user_code + packet)
+}
+
+const startAccel = () => {
+    if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+        DeviceMotionEvent.requestPermission()
+        window.addEventListener('devicemotion', handleAccel)
+    }
+}
+
+handleAccel({acceleration: {x: 1, y: 1, z: 1}})
+
+    </script>
+</body>
+</html>
