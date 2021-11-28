@@ -12,7 +12,8 @@ constructor = {
     },
     'keyboard': {
        'queue': []
-    }
+    },
+    'first': True
 }
 events['TEST'] = deepcopy(constructor)
 
@@ -22,20 +23,28 @@ def root():
 
 @app.route('/read/<code>/')
 def read(code):
-    data = events[code]
-    events[code] = deepcopy(constructor)
-    return data
+    if(code not in events):
+        return 'fail', 404
+    # clear built up data on first connection
+    if events[code]['first']:
+        events[code] = deepcopy(constructor)
+        events[code]['first'] = False
+    return events[code]
 
 @app.route('/write/<code>/')
 def write(code):
-    print(code)
+    if(code not in events):
+        return 'fail', 404
     events[code]['mouse']['x'] += float(request.args.get('x'))
     events[code]['mouse']['y'] += float(request.args.get('y'))
     events[code]['mouse']['z'] += float(request.args.get('z'))
     return 'ok'
 
-@app.route("/granted/")
-def granted():
+@app.route('/reset/<code>')
+def reset():
+    if(code not in events):
+        return 'fail', 404
+    events[code] = deepcopy(constructor)
     return 'ok'
 
 @app.route('/getcode/')
