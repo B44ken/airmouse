@@ -6,29 +6,30 @@
     <title>airmouse</title>
 </head>
 <body>
-    <h1><a href="github.com/b44ken/airmouse">
-        airmouse
-        <button onclick='startAccel()'>start</button>
-    </a></h1>
+    <h1>
+	<a href="github.com/b44ken/airmouse">airmouse</a>
+        <button onclick='getAccel()'>start</button>
+	<p class="code"></p>
+    </h1>
     <script>
-const userCode = 'TEST'
+var userCode = 'TEST'
 
-const handleAccel = event => {
-    accel = event.acceleration
-    var packet = `?x=${accel.x}&y=${accel.y}&z=${accel.z}`
-    fetch('/write/' + user_code + packet)
+const getAccel = () => {
+	DeviceMotionEvent.requestPermission().then(r => {
+		if(r != "granted") { alert(r); return false } 
+		window.addEventListener("devicemotion", handleAccel)
+	})
 }
 
-const startAccel = () => {
-    if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
-        DeviceMotionEvent.requestPermission()
-        window.addEventListener('devicemotion', handleAccel)
-    }
+const handleAccel = event => {
+	A = event.acceleration
+	fetch(`/write/${userCode}/?x=${A.x}&y=${A.y}&z=${A.z}`)
 }
 
 fetch('/getcode').then(e => e.text()).then(e => {
     userCode = e
+    document.querySelector(".code").textContent = "code: " + userCode
 })
-    </script>
+</script>
 </body>
 </html>

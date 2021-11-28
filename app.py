@@ -20,7 +20,7 @@ events['TEST'] = deepcopy(constructor)
 def root():
     return index_html
 
-@app.route('/read/<code>')
+@app.route('/read/<code>/')
 def read(code):
     data = events[code]
     events[code] = deepcopy(constructor)
@@ -28,12 +28,17 @@ def read(code):
 
 @app.route('/write/<code>/')
 def write(code):
+    print(code)
     events[code]['mouse']['x'] += float(request.args.get('x'))
     events[code]['mouse']['y'] += float(request.args.get('y'))
     events[code]['mouse']['z'] += float(request.args.get('z'))
     return 'ok'
 
-@app.route('/makecode/')
+@app.route("/granted/")
+def granted():
+    return 'ok'
+
+@app.route('/getcode/')
 def make_code():
     code = uuid4().hex[0:5]
     events[code] = deepcopy(constructor)
